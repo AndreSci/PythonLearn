@@ -1,0 +1,63 @@
+import os
+import tempfile
+import argparse
+import json
+        # python storage.py --key a --val 5
+def insert_in_file(key_it, val_it):
+
+    storage_path = os.path.join(tempfile.gettempdir(), 'storage.data')
+    #print('Место хранения : {}'.format(storage_path))
+
+    old_dict = {}
+
+    if os.path.exists(storage_path):
+        with open(storage_path) as f:
+            try:
+                old_dict = json.load(f)
+            except ValueError:
+                pass
+
+
+    if not key_it in old_dict:
+        old_dict[key_it] = []
+
+    old_dict[key_it].append(val_it)
+
+    with open(os.path.join(tempfile.gettempdir(), 'storage.data'), 'w') as f:
+        json.dump(old_dict, f)
+
+def read_from_file(key_it):
+    storage_path = os.path.join(tempfile.gettempdir(), 'storage.data')
+
+    old_dict = {}
+    if os.path.exists(storage_path):
+        with open(storage_path) as f:
+            try:
+                old_dict = json.load(f)
+            except ValueError:
+                pass
+
+
+    if not key_it in old_dict:
+        print('')
+    else: #print(old_dict[key_it])
+        mess = ''
+        for it in old_dict[key_it]:
+            if len(mess) != 0:
+                mess +=', '
+            mess += it
+        print(mess)
+
+parser = argparse.ArgumentParser()
+
+parser.add_argument("--key")
+parser.add_argument("--val")
+args = parser.parse_args()
+
+item_key = args.key
+item_val = args.val
+
+if item_val:
+    insert_in_file(item_key, item_val)
+else:
+    read_from_file(item_key)
